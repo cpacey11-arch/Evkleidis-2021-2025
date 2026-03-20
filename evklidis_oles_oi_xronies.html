@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Μικρός Ευκλείδης — Εξάσκηση ΣΤ΄ Δημοτικού</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
+:root{--navy:#1a2e4a;--gold:#c8901a;--gold-light:#fef3d8;--green:#166534;--green-bg:#dcfce7;--red:#991b1b;--red-bg:#fee2e2;--blue:#1e40af;--blue-bg:#eff6ff;--gray-100:#f8f7f5;--gray-200:#eeece8;--gray-300:#d1cfc9;--gray-500:#6b7280;--gray-700:#374151;--gray-900:#111827;--r-md:10px;--r-lg:14px;--shadow:0 1px 3px rgba(0,0,0,0.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--gray-100);color:var(--gray-900);min-height:100vh}
+header{background:var(--navy);color:#fff;padding:1.25rem 1rem;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+header h1{font-size:1.15rem;font-weight:700}
+header p{font-size:0.78rem;opacity:0.75;margin-top:3px}
+.scorebar{background:#fff;border-bottom:1px solid var(--gray-200);display:flex;justify-content:center}
+.scorecard{flex:1;max-width:110px;padding:0.6rem 0.4rem;text-align:center;border-right:1px solid var(--gray-200)}
+.scorecard:last-child{border-right:none}
+.scorecard .num{font-size:1.3rem;font-weight:700}
+.scorecard .num.c{color:var(--green)}.scorecard .num.w{color:var(--red)}.scorecard .num.t{color:var(--navy)}
+.scorecard .lbl{font-size:0.68rem;color:var(--gray-500)}
+.prog-wrap{background:var(--gray-200);height:4px}
+.prog-bar{height:100%;background:var(--gold);transition:width .4s;width:0%}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;padding:0.75rem 0.6rem 0.5rem;background:#fff;border-bottom:1px solid var(--gray-200)}
+.tab{padding:6px 14px;border-radius:99px;border:1.5px solid var(--gray-300);background:#fff;color:var(--gray-700);font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all .15s}
+.tab:hover{border-color:var(--navy);color:var(--navy)}
+.tab.active{color:#fff;border-color:transparent}
+.cat{display:none;padding:0.85rem 0.65rem 2.5rem;max-width:700px;margin:0 auto}
+.cat.visible{display:block}
+.note{font-size:0.74rem;color:var(--gray-500);font-style:italic;margin-bottom:0.7rem;padding:6px 10px;background:var(--gold-light);border-radius:var(--r-md);border:1px solid #fde68a}
+.qcard{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:1rem 1.1rem;margin-bottom:0.85rem;box-shadow:var(--shadow)}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:0.5rem}
+.qbadge{font-size:0.7rem;font-weight:700;padding:2px 9px;border-radius:99px;color:#fff}
+.qtext{font-size:0.88rem;line-height:1.65;margin-bottom:0.8rem;color:var(--gray-900)}
+.opts{display:flex;flex-direction:column;gap:5px}
+.opt{padding:8px 13px;border-radius:var(--r-md);border:1.5px solid var(--gray-200);background:var(--gray-100);cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:500;text-align:left;color:var(--gray-700);transition:all .15s;line-height:1.4}
+.opt:hover:not(:disabled){background:#fff;border-color:var(--navy);color:var(--navy)}
+.opt.correct{background:var(--green-bg);border-color:var(--green);color:var(--green);font-weight:700}
+.opt.wrong{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.opt:disabled{cursor:default}
+.open-row{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}
+.open-row input{flex:1;min-width:130px;padding:8px 11px;border-radius:var(--r-md);border:1.5px solid var(--gray-300);background:var(--gray-100);font-family:'Nunito',sans-serif;font-size:0.84rem;color:var(--gray-900);transition:border-color .15s}
+.open-row input:focus{outline:none;border-color:var(--navy);background:#fff}
+.open-row input:disabled{opacity:.6}
+.check-btn{padding:8px 16px;border-radius:var(--r-md);border:none;color:#fff;font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.check-btn:hover{opacity:.85}.check-btn:disabled{opacity:.5;cursor:default}
+.feedback{display:none;margin-top:7px;padding:7px 11px;border-radius:var(--r-md);font-size:0.79rem;font-weight:600;line-height:1.5}
+.feedback.ok{display:block;background:var(--green-bg);color:var(--green);border:1px solid #86efac}
+.feedback.err{display:block;background:var(--red-bg);color:var(--red);border:1px solid #fca5a5}
+.hint-row{margin-top:8px}
+.hint-btn{background:none;border:none;font-family:'Nunito',sans-serif;font-size:0.74rem;color:var(--blue);cursor:pointer;padding:0;font-weight:600}
+.hint-btn::before{content:'💡 '}
+.hint-box{display:none;margin-top:5px;padding:8px 11px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:var(--r-md);font-size:0.78rem;color:var(--blue);line-height:1.55}
+.hint-box.show{display:block}
+.reset-btn{display:block;margin:1.5rem auto 0;padding:9px 22px;border-radius:99px;border:1.5px solid var(--gray-300);background:#fff;font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gray-700);cursor:pointer;transition:all .15s}
+.reset-btn:hover{border-color:var(--navy);color:var(--navy)}
+footer{text-align:center;font-size:0.72rem;color:var(--gray-500);padding:1rem;border-top:1px solid var(--gray-200);background:#fff;margin-top:1rem}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Μικρός Ευκλείδης — Εξάσκηση ΣΤ΄ Δημοτικού</h1>
+  <p>Θέματα Πανελλήνιου Διαγωνισμού 2021–2025 · Επίσημες απαντήσεις</p>
+</header>
+
+<div class="scorebar">
+  <div class="scorecard"><div class="num c" id="sc">0</div><div class="lbl">Σωστά</div></div>
+  <div class="scorecard"><div class="num w" id="sw">0</div><div class="lbl">Λάθη</div></div>
+  <div class="scorecard"><div class="num t" id="st">0</div><div class="lbl">Σύνολο</div></div>
+  <div class="scorecard"><div class="num t" id="sp">0%</div><div class="lbl">Επιτυχία</div></div>
+</div>
+<div class="prog-wrap"><div class="prog-bar" id="pb"></div></div>
+<div class="tabs" id="tabs"></div>
+<div id="cats"></div>
+
+<script>
+const COLORS=['#1a2e4a','#1e3a5f','#2d4a1e','#7a3b1e','#4a1e2e'];
+
+const DATA=[
+{year:'2021',color:'#1a2e4a',
+ note:'Θέμα 1 (σχεδιασμός συμμετρικού) και Θέμα 8 (σύμβολα <,>=) δεν ελέγχονται online.',
+ qs:[
+  {n:2,type:'mc',text:'Με τα τέσσερα γραμμοσκιασμένα σχήματα φτιάχνουμε ένα ορθογώνιο παραλληλόγραμμο. Ποιες θα είναι οι διαστάσεις του;',
+   opts:['13εκ. και 6εκ.','12εκ. και 5εκ.','11εκ. και 6εκ.','6εκ. και 10εκ.','Κανένα από τα προηγούμενα'],ans:2,
+   hint:'Σωστή απάντηση (επίσημες λύσεις): γ) 11εκ. και 6εκ.'},
+  {n:3,type:'mc',text:'Ποια δύο από τα τρία σχήματα (Α, Β, Γ) έχουν την ίδια περίμετρο;',
+   opts:['Α και Γ','Α και Β','Β και Γ'],ans:1,
+   hint:'Σωστή: β) Α και Β. Μέτρησε προσεκτικά τις πλευρές κάθε σχήματος.'},
+  {n:4,type:'mc',text:'Κ. Μαρία: 2 πίτσες × 12 κομμάτια. Όλοι έφαγαν 3 κομμάτια, περίσσεψαν 6. Πόσα άτομα έφαγαν;',
+   opts:['6 άτομα','8 άτομα','4 άτομα','3 άτομα','Κανένα από τα προηγούμενα'],ans:0,
+   hint:'Σύνολο κομμάτια: 2×12=24. Φαγώθηκαν: 24-6=18. Άτομα: 18÷3=6.'},
+  {n:5,type:'open',text:'Ο Νίκος: αν είχε 20€ παραπάνω, θα αγόραζε φόρμα 37,30€ + μπουφάν 44,70€ και θα περίσσευαν 3€. Πόσα € είχε;',
+   ans:['65'],hint:'37,30+44,70+3=85€. Είχε: 85-20=65€.'},
+  {n:6,type:'mc',text:'Αυτοκινητάκι=2 μπάλες, μπάλα=1 σφυρίχτρα. Κουτί Α: 2 αυτοκινητάκια+3 μπάλες+3 σφυρίχτρες. Κουτί Β: 5 μπάλες+5 σφυρίχτρες. Ποιο έχει μεγαλύτερη αξία;',
+   opts:['Κουτί Α','Κουτί Β','Ίση αξία'],ans:2,
+   hint:'Σε σφυρίχτρες: Α=2×2+3+3=10, Β=5+5=10. Ίση αξία!'},
+  {n:7,type:'open',text:'Μοτίβο: 404.505, 403.405, 402.305, ___, ___, 399.005. Ποιος είναι ο 4ος αριθμός (1ο κενό);',
+   ans:['401205','401.205'],hint:'Μειώνεται κατά 1100. 4ος: 402305-1100=401205.'},
+  {n:9,type:'open',text:'Τετράγωνο πάρκο: γύρος σε 20 λεπτά, 90 βήματα/λεπτό × 0,5μ/βήμα. Μήκος πλευράς (σε μέτρα);',
+   ans:['225'],hint:'Περίμετρος: 20×90×0,5=900μ. Πλευρά: 900÷4=225μ.'},
+  {n:10,type:'open',text:'Σπίτι (σχεδιάγραμμα): υπνοδωμάτιο 16τ.μ. (4×4μ), καθιστικό 24τ.μ., μπάνιο 9τ.μ. (3×3μ). Εμβαδόν κουζίνας (σε τ.μ.);',
+   ans:['20'],hint:'Σωστή απάντηση (επίσημες λύσεις 2021): 20τ.μ.'}
+]},
+
+{year:'2022',color:'#1e3a5f',
+ note:'Θέμα 3 (αριθμογραμμή — γραφικό) και Θέμα 7 (ραβδόγραμμα) δεν ελέγχονται online.',
+ qs:[
+  {n:1,type:'mc',text:'Σχήμα χωρισμένο σε 4 τμήματα (Α,Β,Γ,Δ) με 2 κάθετες γραμμές. Ποια δύο έχουν ίδιο εμβαδόν;',
+   opts:['Α και Β','Α και Γ','Β και Γ','Γ και Δ','Α και Δ'],ans:2,
+   hint:'Σωστή: γ) Β και Γ.'},
+  {n:2,type:'mc',text:'2 από 10 τετράγωνα σκιασμένα. Ποιος αριθμός ΔΕΝ αντιστοιχεί στο σκιασμένο μέρος;',
+   opts:['2/10','0,5','0,2','1/5','Κανένα από τα προηγούμενα'],ans:1,
+   hint:'2/10=0,2=1/5. Το 0,5=1/2≠2/10 — αυτό ΔΕΝ αντιστοιχεί.'},
+  {n:4,type:'mc',text:'79 βελάκια, 3 παιδιά με τη σειρά (Αντρέας-1ος, Λαμπρινή-2η, Στέφανος-3ος). Ποιος ρίχνει το τελευταίο;',
+   opts:['Ο Στέφανος','Η Λαμπρινή','Κανένας από τους δύο'],ans:2,
+   hint:'79÷3=26 υπόλ.1 → ρίχνει ο 1ος (Αντρέας). Ούτε Στέφανος ούτε Λαμπρινή έχουν δίκιο.'},
+  {n:5,type:'mc',text:'Ίδιος αριθμός μικρών (0,90€) και μεγάλων (1,20€) μπάρων, σύνολο 105€. Πόσες από κάθε είδος;',
+   opts:['30','40','50','60','Κανένα από τα προηγούμενα'],ans:2,
+   hint:'Ζεύγος=0,90+1,20=2,10€. 105÷2,10=50. Άρα 50 από κάθε είδος.'},
+  {n:6,type:'open',text:'Τετράγωνο περιμέτρου 96εκ. αποτελείται από 4 ίσα ορθογώνια (3 οριζόντιες γραμμές). Περίμετρος ενός ορθογωνίου (σε εκ.);',
+   ans:['60'],hint:'Πλευρά τετραγώνου=24εκ. Ορθογώνιο: μήκος=24εκ., πλάτος=24÷4=6εκ. Περίμετρος: 2×(24+6)=60εκ.'},
+  {n:8,type:'open',text:'Ανδρέας: 2 μολύβια+1 τετράδιο=2,50€. Αδελφός: 1 μολύβι+2 τετράδια=3,80€. Τιμή τετραδίου (σε €);',
+   ans:['1.70','1,70'],hint:'3μολ+3τετρ=6,30€ → 1μολ+1τετρ=2,10€. Τετράδιο=1,70€, μολύβι=0,40€.'},
+  {n:9,type:'open',text:'Σοκολατάκια (<100): κουτιά των 8→0 περίσσεια, κουτιά των 7 ή 9→περισσεύει 1. Πόσα σοκολατάκια;',
+   ans:['64'],hint:'ΕΚΠ(7,9)=63. 63+1=64=8×8 ✓. 64÷7=υπόλ.1 ✓, 64÷9=υπόλ.1 ✓'},
+  {n:10,type:'open',text:'Πύργος 136εκ. (κύβοι 4εκ.): 10 πρώτοι×16κύβοι, ενδιάμεσοι×9κύβοι, 10 τελευταίοι×4κύβοι. Πόσοι κύβοι συνολικά;',
+   ans:['326'],hint:'Όροφοι: 136÷4=34. Ενδιάμεσοι: 34-20=14. 10×16+14×9+10×4=160+126+40=326.'}
+]},
+
+{year:'2023',color:'#2d4a1e',
+ note:'Θέμα 8 (ραβδόγραμμα) και Θέμα 9 (γεωμετρικό) δεν ελέγχονται online.',
+ qs:[
+  {n:1,type:'mc',text:'Σε ποια σχήματα (Α,Β,Γ,Δ) η ευθεία ΕΙΝΑΙ άξονας συμμετρίας;',
+   opts:['Α και Β','Α και Γ','Β και Γ','Β και Δ','Γ και Δ'],ans:2,
+   hint:'Σωστή: γ) Β και Γ.'},
+  {n:2,type:'mc',text:'Φαγητό στον φούρνο στις 10:20. Χρειάζεται 1 ώρα και 3 τέταρτα. Τι ώρα βγαίνει;',
+   opts:['12:05','12:40','12:00','12:50','12:10'],ans:0,
+   hint:'1 ώρα και 45 λεπτά. 10:20+1:45=12:05.'},
+  {n:3,type:'mc',text:'4 τραπέζια×8 καρέκλες + 1 τραπέζι×5 καρέκλες. Ποια παράσταση δίνει το σύνολο;',
+   opts:['5×(4+8)','4+(5×8)','(4×8)+5','5×4+5×8','8+(5×4)'],ans:2,
+   hint:'4×8 (τέσσερα τραπέζια) + 5 (ένα τραπέζι) = (4×8)+5.'},
+  {n:4,type:'mc',text:'Δέματα α=1κ,β=2κ,γ=3κ,δ=4κ,ε=5κ,στ=6κ. 1ο κουτί=9κ, 2ο=8κ (ανά δύο). Τι μπαίνει στο 3ο;',
+   opts:['ε και β','α και γ','γ και δ','στ και α','ε και β'],ans:1,
+   hint:'1ο: δ+ε=4+5=9 ✓. 2ο: β+στ=2+6=8 ✓. Υπόλοιπα: α και γ.'},
+  {n:5,type:'mc',text:'Περίμετρος σκαλωτού σχήματος (μήκος 8εκ., ύψος 4εκ.);',
+   opts:['10εκ.','12εκ.','16εκ.','24εκ.','20εκ.'],ans:3,
+   hint:'Ισοδύναμο απλού ορθογωνίου: Π=2×(8+4)=24εκ.'},
+  {n:6,type:'open',text:'Τάξη 24 μαθητών. Σε κάθε 5 κορίτσια αντιστοιχούν 3 αγόρια. Πόσα αγόρια;',
+   ans:['9'],hint:'Κάθε ομάδα: 5+3=8. 24÷8=3 ομάδες. Αγόρια: 3×3=9.'},
+  {n:7,type:'open',text:'Μοτίβα: ...2005,2012,2019... (+7) και ...2005,2014,2023... (+9). Επόμενος κοινός αριθμός μετά το 2005;',
+   ans:['2068'],hint:'ΕΚΠ(7,9)=63. 2005+63=2068.'},
+  {n:10,type:'open',text:'3 δέντρα, 48 πουλιά συνολικά. Μετά από μετακινήσεις τα 3 δέντρα έχουν ίσα πουλιά. Πόσα είχε αρχικά το 1ο δέντρο;',
+   ans:['24'],hint:'Τελικά: 48÷3=16 ανά δέντρο. 1ο έδωσε 8: είχε 16+8=24.'}
+]},
+
+{year:'2024',color:'#7a3b1e',
+ note:'Θέμα 1 (συμμετρία-σχεδιαστικό), Θέμα 4 (συμπλήρωση γραφήματος) και Θέμα 5 (αντιστοίχιση) δεν ελέγχονται online.',
+ qs:[
+  {n:2,type:'mc',text:'Ποιο γράμμα (Μ, Ο, Β) έχει το μεγαλύτερο εμβαδόν;',
+   opts:['Μ','Ο','Β'],ans:0,
+   hint:'Σωστή: α) Μ — καλύπτει τα περισσότερα τετράγωνα.'},
+  {n:3,type:'mc',text:'Οριζόντιο άθροισμα=182, διαγώνιο=129. Τιμή συμβόλων ⚙ και ⌒:',
+   opts:['⚙:43 και ⌒:45','⚙:43 και ⌒:48','⚙:39 και ⌒:48','⚙:48 και ⌒:49'],ans:1,
+   hint:'Σωστή: β) ⚙=43 και ⌒=48.'},
+  {n:4,type:'open',text:'3 σχολεία, 580 μαθητές. 1ο=150. 3ο σχολείο=150+2/5×150. Πόσοι μαθητές στο 2ο σχολείο;',
+   ans:['220'],hint:'3ο: 150+60=210. 2ο: 580-150-210=220.'},
+  {n:6,type:'open',text:'Έρευνα: τα 4/7 ήθελαν νησί. Υπόλοιποι: 65 χωριό + 16 χωρίς επιθυμία. Πόσοι συμμετείχαν συνολικά;',
+   ans:['189'],hint:'3/7=65+16=81 → 1/7=27 → Σύνολο=27×7=189.'},
+  {n:7,type:'open',text:'Ρομπότ: τετράγωνο 36τ.εκ., τρίγωνο και ορθογώνιο — ίση περίμετρος. Ποιο το μήκος του ορθογωνίου (σε εκ.);',
+   ans:['8'],hint:'Πλευρά τετραγώνου=6εκ., περίμετρος=24εκ. Τρίγωνο: πλευρά=8εκ. Ορθογώνιο: μήκος=8εκ., πλάτος=4εκ.'},
+  {n:8,type:'open',text:'Κωδικός 5ψήφιος: 2 πρώτα ψηφία=ΕΚΠ(12,32,48), 4ο ψηφίο=ΜΚΔ(16,24,32), περιττός, άθροισμα ψηφίων=24. Ποιος είναι ο αριθμός;',
+   ans:['96081'],hint:'ΕΚΠ=96, ΜΚΔ=8. 9+6+0+8+1=24 ✓, περιττός ✓. Αριθμός: 96081.'},
+  {n:9,type:'open',text:'60 μπισκότα σε σακούλες με ίσο αριθμό. Πόσες διαφορετικές περιπτώσεις υπάρχουν;',
+   ans:['12'],hint:'Διαιρέτες του 60: 1,2,3,4,5,6,10,12,15,20,30,60 → 12 περιπτώσεις.'},
+  {n:10,type:'open',text:'3 ίσα τετράγωνα επικαλύπτονται. Επικαλύψεις: 16 και 10τ.εκ. Μη επικαλυπτόμενη επιφάνεια: 140τ.εκ. Πλευρά κάθε τετραγώνου (σε εκ.);',
+   ans:['8'],hint:'3 τετράγωνα: 140+2×(16+10)=192τ.εκ. Κάθε τετράγωνο: 64τ.εκ. Πλευρά: √64=8εκ.'}
+]},
+
+{year:'2025',color:'#4a1e2e',
+ note:'Θέμα 1 (χρωματισμός για συμμετρία) δεν ελέγχεται online.',
+ qs:[
+  {n:2,type:'mc',text:'Ο αριθμός 67.008 ισούται με:',
+   opts:['(6×10⁴)+(7×10²)+8','(6×10⁴)+(7×10³)+8','(6×10³)+(7×10)+8','(6×10³)+(7×10²)+8'],ans:1,
+   hint:'67.008=60.000+7.000+8=6×10⁴+7×10³+8.'},
+  {n:3,type:'open',text:'Τρίγωνο+Κύκλος=18 και 3 Κύκλοι+Τρίγωνο=32. Τι ισούται ο Κύκλος;',
+   ans:['7'],hint:'Αφαιρώ τις εξισώσεις: 2 Κύκλοι=14 → Κύκλος=7, Τρίγωνο=11.'},
+  {n:4,type:'mc',text:'Κορδέλα μετρημένη με χάρακα (0-10εκ.). Πόσο είναι το μήκος της;',
+   opts:['0,83μ.','0,83εκ.','83χιλ.','83εκ.'],ans:2,
+   hint:'Σωστή: γ) 83 χιλιοστά.'},
+  {n:5,type:'mc',text:'Διάγραμμα κυλικείου (5 ημέρες): πόσα περισσότερα κουλούρια από χυμούς πουλήθηκαν συνολικά;',
+   opts:['10','20','30','40'],ans:2,
+   hint:'Σωστή: γ) 30.'},
+  {n:6,type:'open',text:'Πέτρος στην καρέκλα 5, Χριστίνα (απέναντι) στην καρέκλα 17, γύρω από στρογγυλό τραπέζι. Πόσα παιδιά συνολικά;',
+   ans:['24'],hint:'Από 5 ως 17: 11 ενδιάμεσες. Από 17 ως 5: άλλες 11. Συν τις 2 καρέκλες (5 και 17): 11+11+2=24.'},
+  {n:'7α',type:'open',text:'Μοτίβο εξαγώνων: 1ος=6, 2ος=11, 3ος=16 ξυλάκια. Πόσα ξυλάκια ο 5ος όρος;',
+   ans:['26'],hint:'Τύπος: 6+(n-1)×5. Για n=5: 6+4×5=26.'},
+  {n:'7β',type:'open',text:'Ίδιο μοτίβο εξαγώνων. Πόσα ξυλάκια ο 10ος όρος;',
+   ans:['51'],hint:'Για n=10: 6+9×5=51.'},
+  {n:8,type:'open',text:'Ορθογώνιο Ζ: εμβαδόν=μισό αθροίσματος 5 ίδιων ορθογωνίων (6×4εκ.). Πλάτος του Ζ αν μήκος=20εκ. (σε εκ.);',
+   ans:['3'],hint:'5×24=120τ.εκ. Εμβαδόν Ζ: 120÷2=60τ.εκ. Πλάτος: 60÷20=3εκ.'},
+  {n:9,type:'open',text:'Κωμόπολη: άνδρες=2/5 κατοίκων, γυναίκες=3/8. Άνδρες-γυναίκες=30. Πόσα είναι τα παιδιά;',
+   ans:['270'],hint:'Διαφορά άνδρες-γυναίκες=1/40 του συνόλου. 1/40×Σ=30 → Σ=1200. Παιδιά: 9/40×1200=270.'},
+  {n:10,type:'open',text:'Αγώνας (45-60 πόντοι): Ομάδα Α=πρώτος αριθμός, αντίστροφα ÷2. Ομάδα Β=πρώτος αριθμός, αντίστροφα ÷7. Πόντοι ομάδας Α;',
+   ans:['47'],hint:'Πρώτοι 45-60: 47,53,59. Αντίστροφα: 74(÷2✓), 35(÷7✓). Ομάδα Α=47, Ομάδα Β=53.'}
+]}
+];
+
+let cor=0,wr=0,tot=0;
+const TOTAL=DATA.reduce((s,c)=>s+c.qs.length,0);
+
+function norm(s){return String(s).trim().replace(',','.').replace(/\s/g,'').toLowerCase();}
+
+function build(){
+  const tabsEl=document.getElementById('tabs');
+  const catsEl=document.getElementById('cats');
+  tabsEl.innerHTML='';catsEl.innerHTML='';
+
+  DATA.forEach((cat,ci)=>{
+    // Tab
+    const tb=document.createElement('button');
+    tb.className='tab'+(ci===0?' active':'');
+    tb.textContent=cat.year;
+    if(ci===0){tb.style.background=cat.color;tb.style.color='#fff';tb.style.borderColor=cat.color;}
+    tb.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(t=>{t.classList.remove('active');t.style.background='';t.style.color='';t.style.borderColor='';});
+      document.querySelectorAll('.cat').forEach(c=>c.classList.remove('visible'));
+      tb.classList.add('active');tb.style.background=cat.color;tb.style.color='#fff';tb.style.borderColor=cat.color;
+      document.getElementById('cat'+ci).classList.add('visible');
+    };
+    tabsEl.appendChild(tb);
+
+    // Category block
+    const block=document.createElement('div');
+    block.className='cat'+(ci===0?' visible':'');
+    block.id='cat'+ci;
+
+    if(cat.note){
+      const n=document.createElement('div');n.className='note';n.textContent=cat.note;block.appendChild(n);
+    }
+
+    cat.qs.forEach((q,qi)=>{
+      const qid='c'+ci+'_q'+qi;
+      const card=document.createElement('div');card.className='qcard';
+
+      const badge=document.createElement('span');badge.className='qbadge';
+      badge.style.background=cat.color;badge.textContent='Θέμα '+q.n;
+      const qh=document.createElement('div');qh.className='qhead';qh.appendChild(badge);
+      card.appendChild(qh);
+
+      const qt=document.createElement('div');qt.className='qtext';qt.textContent=q.text;
+      card.appendChild(qt);
+
+      if(q.type==='mc'){
+        const opts=document.createElement('div');opts.className='opts';
+        q.opts.forEach((opt,oi)=>{
+          const btn=document.createElement('button');btn.className='opt';
+          btn.textContent=String.fromCharCode(945+oi)+') '+opt;
+          btn.onclick=()=>{
+            if(document.getElementById('fb'+qid).textContent)return;
+            opts.querySelectorAll('.opt').forEach((b,i)=>{
+              b.disabled=true;
+              if(i===q.ans)b.classList.add('correct');
+              else if(i===oi)b.classList.add('wrong');
+            });
+            const ok=oi===q.ans;
+            showFB(qid,ok,ok?'✓ Σωστά! Μπράβο!':'✗ Λάθος. Σωστή: '+String.fromCharCode(945+q.ans)+').');
+            record(ok);
+          };
+          opts.appendChild(btn);
+        });
+        card.appendChild(opts);
+      } else {
+        const row=document.createElement('div');row.className='open-row';
+        const inp=document.createElement('input');inp.type='text';inp.placeholder='Η απάντησή σου...';inp.id='inp'+qid;
+        inp.onkeydown=e=>{if(e.key==='Enter')doOpen(qid,q.ans,inp);};
+        const btn=document.createElement('button');btn.className='check-btn';btn.style.background=cat.color;
+        btn.textContent='Έλεγχος';btn.onclick=()=>doOpen(qid,q.ans,inp);
+        row.appendChild(inp);row.appendChild(btn);card.appendChild(row);
+      }
+
+      const fb=document.createElement('div');fb.className='feedback';fb.id='fb'+qid;card.appendChild(fb);
+      const hr=document.createElement('div');hr.className='hint-row';
+      const hb=document.createElement('button');hb.className='hint-btn';hb.textContent='Υπόδειξη';
+      hb.onclick=()=>document.getElementById('hbox'+qid).classList.toggle('show');
+      const hbox=document.createElement('div');hbox.className='hint-box';hbox.id='hbox'+qid;hbox.textContent=q.hint;
+      hr.appendChild(hb);hr.appendChild(hbox);card.appendChild(hr);
+      block.appendChild(card);
+    });
+
+    const rb=document.createElement('button');rb.className='reset-btn';
+    rb.textContent='🔄 Επαναφορά';
+    rb.onclick=()=>{cor=0;wr=0;tot=0;build();document.getElementById('sc').textContent=0;document.getElementById('sw').textContent=0;document.getElementById('st').textContent=0;document.getElementById('sp').textContent='0%';document.getElementById('pb').style.width='0%';document.querySelectorAll('.tab')[ci].click();};
+    block.appendChild(rb);
+    catsEl.appendChild(block);
+  });
+}
+
+function doOpen(qid,answers,inp){
+  if(document.getElementById('fb'+qid).textContent)return;
+  const val=norm(inp.value);if(!val){inp.focus();return;}
+  const ok=answers.map(a=>norm(a)).includes(val);
+  inp.disabled=true;
+  showFB(qid,ok,ok?'✓ Σωστά! Μπράβο!':'✗ Λάθος. Σωστή: '+answers[0]);
+  record(ok);
+}
+
+function showFB(qid,ok,msg){
+  const fb=document.getElementById('fb'+qid);fb.textContent=msg;fb.className='feedback '+(ok?'ok':'err');
+}
+
+function record(ok){
+  tot++;if(ok)cor++;else wr++;
+  document.getElementById('sc').textContent=cor;
+  document.getElementById('sw').textContent=wr;
+  document.getElementById('st').textContent=tot;
+  document.getElementById('sp').textContent=(tot>0?Math.round(cor/tot*100):0)+'%';
+  document.getElementById('pb').style.width=Math.round(tot/TOTAL*100)+'%';
+}
+
+build();
+</script>
+
+<footer>Πανελλήνιος Μαθητικός Διαγωνισμός «Παιχνίδι και Μαθηματικά» — Ελληνική Μαθηματική Εταιρεία 2021-2025</footer>
+</body>
+</html>
